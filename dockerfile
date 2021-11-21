@@ -4,16 +4,17 @@ FROM node:latest as build
 WORKDIR /frexco
 
 #Copia o app em React para o container  
-COPY .  /frexco
+COPY ./frexco /frexco
 
 #Prepara o container para o build do React
 RUN npm install --silent
 RUN npm install react-scripts@4.0.3 -g --silent
+RUN npm update
 
 RUN npm run build
 
 #Prepara o NGINX
-FROM nginx:1.21.4-alpine
+FROM nginx:1.21.4-alpine as nginx
 COPY --from=build /frexco/build /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx/nginx.conf /etc/nginx/conf.d 
